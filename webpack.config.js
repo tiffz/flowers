@@ -18,9 +18,21 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          { loader: 'style-loader', options: { injectType: 'styleTag' } },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+            },
+          },
+        ],
       },
     ],
+  },
+  resolve: {
+    alias: { 'react-dom': '@hot-loader/react-dom' },
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
 };

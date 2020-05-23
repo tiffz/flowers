@@ -1,20 +1,40 @@
+button {
+  border: 0;
+  background: none;
+}
+
 .container {
   display: grid;
-  grid-template-columns: 1fr minmax(20%, 256px);
+  grid-template-columns: 1fr minmax(25%, 256px);
   width: 100%;
   height: 100%;
-  background: red;
 }
 
 .canvas {
+  display: grid;
+  overflow: auto;
+  position: sticky;
+  grid-gap: 2px;
+  grid-template-columns: repeat(30, 50px);
+}
+
+.grid-square {
+  width: 50px;
+  height: 50px;
+  background: white;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar {
-
+  height: 100%;
+  overflow: auto;
+  position: sticky;
+  padding: 8px;
 }
 
 .flower {
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
 }
