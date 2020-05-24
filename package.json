@@ -7,8 +7,8 @@
     "compile": "webpack",
     "build": "webpack -p",
     "prestart": "npm run compile",
-    "start": "node server.js",
-    "preddeploy": "npm run build",
+    "start": "webpack-dev-server",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d public"
   },
   "keywords": [
