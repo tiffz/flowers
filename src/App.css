@@ -1,9 +1,3 @@
-h2 {
-  font-size: 18px;
-  line-height: 120%;
-  width: 100%;
-}
-
 .container {
   display: grid;
   grid-template-columns: minmax(25%, 256px) 1fr;
@@ -16,19 +10,9 @@ h2 {
   overflow: auto;
   position: sticky;
   grid-gap: 3px;
+  padding: 3px;
   grid-template-columns: repeat(30, max-content);
-}
-
-.bgButton {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  margin: 2px;
-  border: 2px solid var(--bg-color);
-}
-
-.bgButton.selected {
-  border-color: blue;
+  transition: var(--bg-transition);
 }
 
 .gridSquare {
@@ -38,25 +22,6 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.sidebar {
-  height: 100%;
-  overflow: auto;
-  position: sticky;
-  padding: 8px;
-}
-
-.flower {
-  width: 64px;
-  height: 64px;
-}
-
-.flowerSelector {
-  width: 48px;
-  height: 48px;
-}
-
-.flowerSelector.selected {
-  background: pink;
+  user-select: none;
+  transition: var(--bg-transition);
 }

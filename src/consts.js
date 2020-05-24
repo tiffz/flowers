@@ -59,7 +59,8 @@ export const FLOWERS = Object.freeze([
 ]);
 
 export const BACKGROUNDS = Object.freeze([
-  { name: 'Default', canvasBg: 'none', tileBg: 'white' },
+  { name: 'Light Mode', canvasBg: 'none', tileBg: 'white' },
+  { name: 'Dark Mode', canvasBg: '#141617', tileBg: '#232d32' },
   { name: 'Grass', canvasBg: '#C0C62F', tileBg: '#589B4A' },
   { name: 'Dirt', canvasBg: '#D0A96C', tileBg: '#DDB57C' },
   { name: 'Dark Dirt', canvasBg: '#AC6E49', tileBg: '#B3754F' },
@@ -75,3 +76,6 @@ export const TILE_SIZES = Object.freeze([
 ]);
 
 export const DEFAULT_DIMENSIONS = Object.freeze({ width: 30, height: 30 });
+
+export const NO_SELECTED_FLOWER = -1;
+export const FLOWER_DELETION_TOOL = 0;

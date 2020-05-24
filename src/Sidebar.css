@@ -1,0 +1,126 @@
+h2 {
+  font-size: 18px;
+  line-height: 120%;
+  width: 100%;
+  font-weight: thin;
+  padding: 0 8px;
+  letter-spacing: 0.1px;
+}
+
+p {
+  font-size: 14px;
+  line-height: 180%;
+  margin: 0.5em 8px;
+}
+
+.sidebar {
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 100%;
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 4px;
+  overflow: hidden;
+  --vertical-section-spacing: 12px;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+  margin: var(--vertical-section-spacing) auto;
+}
+
+.button, .buttonGroup > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent-color);
+  margin: var(--vertical-section-spacing) auto;
+  padding: 2px 16px;
+  font-size: 14px;
+  line-height: 32px;
+  transition: var(--bg-transition);
+  border-radius: 24px;
+}
+
+.buttonGroup > button {
+  border-radius: 0;
+  margin: 0;
+  border-right-width: 0px;
+}
+
+.buttonGroup > button:first-child {
+  border-radius: 24px 0 0 24px;
+}
+
+.buttonGroup > button:last-child {
+  border-right-width: 1px;
+  border-radius: 0 24px 24px 0;
+}
+
+.button > img, .button > .icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 2px;
+  margin-left: -4px;
+}
+
+.button:hover, .buttonGroup > button:hover {
+  background: var(--accent-bg-light);
+}
+
+.button.selected, .buttonGroup > button.selected {
+  background: var(--accent-bg);
+}
+
+.button.tertiary {
+  border-color: #FF8A80;
+}
+
+.button.tertiary:hover {
+  background: #FFCDD2;
+}
+
+.backgroundSelector {
+  margin: var(--vertical-section-spacing) auto;
+}
+
+.bgButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 2px;
+  border: 2px solid var(--bg-color);
+}
+
+.bgButton.selected {
+  border-color: var(--accent-color);
+}
+
+.flowerSelector {
+  overflow: auto;
+  width: 100%;
+  flex-grow: 2;
+}
+
+.flowerSelectorButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  transition: var(--bg-transition), var(--border-transition);
+  border: 1px solid transparent;
+}
+
+.flowerSelectorButton:hover {
+  background: var(--accent-bg-light);
+}
+
+.flowerSelectorButton.selected {
+  background: var(--accent-bg);
+  border-color: var(--accent-color);
+}
