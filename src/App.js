@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './App.css';
 import {
   FLOWERS,
@@ -22,11 +22,30 @@ function mapRange(end, f) {
 }
 
 function App() {
-  const [flowerLayout, setFlowerLayout] = useState({});
-  const [selectedFlower, setSelectedFlower] = useState(NO_SELECTED_FLOWER);
-  const [bgId, setBgId] = useState(0);
-  const [iconStyle, setIconStyle] = useState(0);
-  const [tileSize, setTileSize] = useState(1);
+  const initialState = JSON.parse(localStorage.getItem('acnhFlowers')) || {};
+
+  const [flowerLayout, setFlowerLayout] = useState(
+    initialState.flowerLayout || {},
+  );
+  const [selectedFlower, setSelectedFlower] = useState(
+    initialState.selectedFlower || NO_SELECTED_FLOWER,
+  );
+  const [bgId, setBgId] = useState(initialState.bgId || 0);
+  const [iconStyle, setIconStyle] = useState(initialState.iconStyle || 0);
+  const [tileSize, setTileSize] = useState(initialState.tileSize || 1);
+
+  useEffect(() => {
+    localStorage.setItem(
+      'acnhFlowers',
+      JSON.stringify({
+        flowerLayout,
+        selectedFlower,
+        bgId,
+        iconStyle,
+        tileSize,
+      }),
+    );
+  });
 
   const { canvasBg, tileBg } = BACKGROUNDS[bgId];
   const { size } = TILE_SIZES[tileSize];
@@ -34,14 +53,17 @@ function App() {
   const flowerGrid = mapRange(DEFAULT_DIMENSIONS.width, (x) =>
     mapRange(DEFAULT_DIMENSIONS.height, (y) => {
       const key = `${x}-${y}`;
-      const id = flowerLayout[key] || 0;
+      const id = flowerLayout[key];
       const updateFlowerLayout = () => {
         if (selectedFlower === NO_SELECTED_FLOWER) return;
         const newLayout = {
           ...flowerLayout,
           [key]: selectedFlower,
         };
-        if (selectedFlower === FLOWER_DELETION_TOOL) {
+
+        // Delete the flower if the user is either using the eraser tool or
+        // is clicking on a flower that's the same as the selected flower.
+        if (selectedFlower === FLOWER_DELETION_TOOL || selectedFlower === id) {
           delete newLayout[key];
         }
         setFlowerLayout(newLayout);
@@ -97,6 +119,7 @@ function Sidebar({
         const selected = id === bgId;
         return (
           <button
+            key={tileBg}
             type="button"
             className={`${styles.bgButton} ${selected ? styles.selected : ''}`}
             aria-label={`Change background to ${tileBg}`}
@@ -109,11 +132,11 @@ function Sidebar({
         type="button"
         onClick={() => setIconStyle((iconStyle + 1) % ICON_STYLES.length)}
       >
-        Switch icon style
+        Toggle icon style
       </button>
       Tile size:{' '}
       {TILE_SIZES.map(({ name }, id) => (
-        <button type="button" onClick={() => setTileSize(id)}>
+        <button type="button" key={name} onClick={() => setTileSize(id)}>
           {name}
         </button>
       ))}
@@ -149,7 +172,7 @@ function Sidebar({
             className={`${styles.flowerSelector} ${
               selected ? styles.selected : ''
             }`}
-            key={name}
+            key={name || 'Delete tool'}
           >
             {content}
           </button>

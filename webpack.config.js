@@ -4,6 +4,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const config = {
   mode: isDevelopment ? 'development' : 'production',
+  devtool: 'cheap-source-map',
   context: path.join(__dirname, 'src'),
   entry: ['./main.js'],
   devServer: {
