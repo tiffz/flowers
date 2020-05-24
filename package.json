@@ -22,11 +22,9 @@
     "url": "git://github.com/tiffz/flowers.git"
   },
   "dependencies": {
-    "@hot-loader/react-dom": "^16.13.0",
-    "express": "^4.16.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "webpack": "^4.16.3"
+    "react-hot-loader": "^4.12.21"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
@@ -34,6 +32,7 @@
     "@babel/plugin-transform-react-jsx": "^7.9.4",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
+    "@hot-loader/react-dom": "^16.13.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "css-loader": "^3.5.3",
@@ -48,10 +47,9 @@
     "eslint-plugin-react": "^7.20.0",
     "gh-pages": "^2.2.0",
     "prettier": "^2.0.5",
-    "react-hot-loader": "^4.12.21",
     "style-loader": "^1.2.1",
+    "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-middleware": "^3.7.2",
-    "webpack-hot-middleware": "^2.25.0"
+    "webpack-dev-server": "^3.11.0"
   }
 }

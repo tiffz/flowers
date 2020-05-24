@@ -1,10 +1,16 @@
 const path = require('path');
-const webpack = require('webpack');
 
-module.exports = {
-  mode: 'development',
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+const config = {
+  mode: isDevelopment ? 'development' : 'production',
   context: path.join(__dirname, 'src'),
-  entry: ['webpack-hot-middleware/client?path=/__webpack_hmr', './main.js'],
+  entry: ['./main.js'],
+  devServer: {
+    contentBase: path.join(__dirname, 'public'),
+    publicPath: '/build',
+    hot: true,
+  },
   output: {
     path: path.join(__dirname, 'public/build'),
     filename: 'bundle.min.js',
@@ -32,7 +38,11 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: { 'react-dom': '@hot-loader/react-dom' },
+    alias: {
+      'react-dom': '@hot-loader/react-dom',
+    },
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [],
 };
+
+module.exports = config;

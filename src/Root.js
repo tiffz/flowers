@@ -1,11 +1,7 @@
 import React from 'react';
-import { hot, setConfig } from 'react-hot-loader';
-import App from './App';
+import { hot } from 'react-hot-loader/root';
+import App from './App.js';
 
-setConfig({ logLevel: 'debug' });
+const Root = () => <App />;
 
-function Root() {
-  return <App />;
-}
-
-export default hot(module)(Root);
+export default hot(Root);
