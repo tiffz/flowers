@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 import styles from './App.css';
 import Sidebar from './Sidebar';
+import useMousePosition from './useMousePosition';
 import Flower from './Flower';
 import {
   DEFAULT_DIMENSIONS,
@@ -23,12 +24,13 @@ function mapRange(end, f) {
 
 function App() {
   const initialState = JSON.parse(localStorage.getItem('acnhFlowers')) || {};
+  const { x, y } = useMousePosition();
 
   const [flowerLayout, setFlowerLayout] = useState(
     initialState.flowerLayout || {},
   );
   const [selectedFlower, setSelectedFlower] = useState(
-    initialState.selectedFlower || NO_SELECTED_FLOWER,
+    initialState.selectedFlower || 1,
   );
   const [bgId, setBgId] = useState(initialState.bgId || 0);
   const [iconStyle, setIconStyle] = useState(initialState.iconStyle || 0);
@@ -84,24 +86,43 @@ function App() {
   );
 
   return (
-    <div className={styles.container}>
-      <Sidebar
-        {...{
-          bgId,
-          setBgId,
-          setFlowerLayout,
-          selectedFlower,
-          setSelectedFlower,
-          iconStyle,
-          setIconStyle,
-          tileSize,
-          setTileSize,
+    <>
+      <div
+        className={styles.cursorTracker}
+        style={{
+          top: y + 8,
+          left: x,
         }}
-      />
-      <div className={styles.canvas} style={{ background: canvasBg }}>
-        {flowerGrid}
+      >
+        {selectedFlower === FLOWER_DELETION_TOOL ? (
+          <img
+            src="images/trash.png"
+            alt="Erase flowers"
+            title="Erase flowers"
+          />
+        ) : (
+          <Flower id={selectedFlower} iconStyle={iconStyle} />
+        )}
       </div>
-    </div>
+      <div className={styles.container}>
+        <Sidebar
+          {...{
+            bgId,
+            setBgId,
+            setFlowerLayout,
+            selectedFlower,
+            setSelectedFlower,
+            iconStyle,
+            setIconStyle,
+            tileSize,
+            setTileSize,
+          }}
+        />
+        <div className={styles.canvas} style={{ background: canvasBg }}>
+          {flowerGrid}
+        </div>
+      </div>
+    </>
   );
 }
 
