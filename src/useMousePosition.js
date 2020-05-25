@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 const useMousePosition = () => {
   const [mousePosition, setMousePosition] = useState({ x: null, y: null });
 
-  const updateMousePosition = (ev) => {
-    setMousePosition({ x: ev.clientX, y: ev.clientY });
+  const updateMousePosition = ({ clientX, clientY }) => {
+    if (mousePosition.x === clientX && mousePosition.y === clientY) return;
+    setMousePosition({ x: clientX, y: clientY });
   };
 
   useEffect(() => {
