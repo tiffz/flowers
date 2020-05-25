@@ -102,7 +102,7 @@ export const BACKGROUNDS = Object.freeze([
   { name: 'Sand', canvasBg: '#E7C87B', tileBg: '#F4E6BA' },
 ]);
 
-export const ICON_STYLES = Object.freeze(['Clothes', 'Inventory']);
+export const ICON_STYLES = Object.freeze(['Inventory', 'Storage']);
 
 export const TILE_SIZES = Object.freeze([
   { name: 'Small', size: '32px' },

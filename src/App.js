@@ -5,26 +5,19 @@ import React, { useState, useEffect } from 'react';
 import styles from './App.css';
 import Sidebar from './Sidebar';
 import useMousePosition from './useMousePosition';
-import Flower from './Flower';
-import {
-  DEFAULT_DIMENSIONS,
-  BACKGROUNDS,
-  TILE_SIZES,
-  NO_SELECTED_FLOWER,
-  FLOWER_DELETION_TOOL,
-} from './consts';
+import FlowerGrid from './FlowerGrid';
+import { FLOWER_DELETION_TOOL } from './consts';
 
-function mapRange(end, f) {
-  const arr = [];
-  for (let i = 0; i < end; i += 1) {
-    arr[i] = f(i);
-  }
-  return arr;
-}
+
+const ENABLE_CURSOR = false;
 
 function App() {
   const initialState = JSON.parse(localStorage.getItem('acnhFlowers')) || {};
-  const { x, y } = useMousePosition();
+  let mouse;
+
+  if (ENABLE_CURSOR) {
+    mouse = useMousePosition();
+  }
 
   const [flowerLayout, setFlowerLayout] = useState(
     initialState.flowerLayout || {},
@@ -49,61 +42,29 @@ function App() {
     );
   });
 
-  const { canvasBg, tileBg } = BACKGROUNDS[bgId];
-  const { size } = TILE_SIZES[tileSize];
-
-  const flowerGrid = mapRange(DEFAULT_DIMENSIONS.width, (x) =>
-    mapRange(DEFAULT_DIMENSIONS.height, (y) => {
-      const key = `${x}-${y}`;
-      const id = flowerLayout[key];
-      const updateFlowerLayout = () => {
-        if (selectedFlower === NO_SELECTED_FLOWER) return;
-        const newLayout = {
-          ...flowerLayout,
-          [key]: selectedFlower,
-        };
-
-        // Delete the flower if the user is either using the eraser tool or
-        // is clicking on a flower that's the same as the selected flower.
-        if (selectedFlower === FLOWER_DELETION_TOOL || selectedFlower === id) {
-          delete newLayout[key];
-        }
-        setFlowerLayout(newLayout);
-      };
-
-      return (
-        <button
-          type="button"
-          className={styles.gridSquare}
-          onClick={updateFlowerLayout}
-          key={key}
-          style={{ background: tileBg, width: size, height: size }}
-        >
-          <Flower id={id} iconStyle={iconStyle} />
-        </button>
-      );
-    }),
-  );
-
   return (
     <>
-      <div
-        className={styles.cursorTracker}
-        style={{
-          top: y + 8,
-          left: x,
-        }}
-      >
-        {selectedFlower === FLOWER_DELETION_TOOL ? (
-          <img
-            src="images/trash.png"
-            alt="Erase flowers"
-            title="Erase flowers"
-          />
-        ) : (
-          <Flower id={selectedFlower} iconStyle={iconStyle} />
-        )}
-      </div>
+      {mouse && mouse.x > 0 && mouse.y > 0 ? (
+        <div
+          className={styles.cursorTracker}
+          style={{
+            top: mouse.y + 8,
+            left: mouse.x,
+          }}
+        >
+          {selectedFlower === FLOWER_DELETION_TOOL ? (
+            <img
+              src="images/trash.png"
+              alt="Erase flowers"
+              title="Erase flowers"
+            />
+          ) : (
+            <Flower id={selectedFlower} iconStyle={iconStyle} />
+          )}
+        </div>
+      ) : (
+        ''
+      )}
       <div className={styles.container}>
         <Sidebar
           {...{
@@ -118,9 +79,16 @@ function App() {
             setTileSize,
           }}
         />
-        <div className={styles.canvas} style={{ background: canvasBg }}>
-          {flowerGrid}
-        </div>
+        <FlowerGrid
+          {...{
+            tileSize,
+            bgId,
+            iconStyle,
+            flowerLayout,
+            setFlowerLayout,
+            selectedFlower,
+          }}
+        />
       </div>
     </>
   );

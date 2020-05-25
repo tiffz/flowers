@@ -1,0 +1,24 @@
+.canvas {
+  display: grid;
+  overflow: auto;
+  position: sticky;
+  grid-gap: 3px;
+  padding: 3px;
+  grid-template-columns: repeat(30, max-content);
+  transition: var(--bg-transition);
+}
+
+.gridSquare {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: var(--bg-transition);
+}
+
+.gridSquare > img {
+  pointer-events: none;
+}
