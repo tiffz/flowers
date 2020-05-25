@@ -68,6 +68,7 @@ function App() {
         }
         setFlowerLayout(newLayout);
       };
+
       return (
         <button
           type="button"

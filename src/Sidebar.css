@@ -2,9 +2,12 @@ h2 {
   font-size: 18px;
   line-height: 120%;
   width: 100%;
-  font-weight: thin;
   padding: 0 8px;
   letter-spacing: 0.1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 p {
@@ -35,7 +38,7 @@ p {
   margin: var(--vertical-section-spacing) auto;
 }
 
-.button, .buttonGroup > button {
+.smallButton, .button, .buttonGroup > button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,6 +49,10 @@ p {
   line-height: 32px;
   transition: var(--bg-transition);
   border-radius: 24px;
+}
+
+.smallButton {
+  line-height: 20px;
 }
 
 .buttonGroup > button {
@@ -76,6 +83,13 @@ p {
 
 .button.selected, .buttonGroup > button.selected {
   background: var(--accent-bg);
+}
+
+.importExport {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .button.tertiary {
