@@ -29,3 +29,12 @@ button {
   cursor: pointer;
   outline: none;
 }
+
+a, a:visited {
+  text-decoration: none;
+  color: var(--accent-color);
+}
+
+a:hover {
+  text-decoration: underline;
+}
