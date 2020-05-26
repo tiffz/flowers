@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable react/prop-types */
 import React, { useState, useRef } from 'react';
@@ -47,15 +48,36 @@ function normalizeRectangle(rectStart, end) {
   return { start, size };
 }
 
-const mutateFlowerInLayout = (layout, key, selectedFlower) => {
-  // Delete the flower if the user is using the eraser tool.
-  if (selectedFlower === FLOWER_DELETION_TOOL) {
-    // eslint-disable-next-line no-param-reassign
-    delete layout[key];
-  } else {
-    // eslint-disable-next-line no-param-reassign
-    layout[key] = selectedFlower;
-  }
+const mutateFlowersInLayout = (layout, keys, newValue) => {
+  const nextLayout = { ...layout };
+  keys.forEach((key) => {
+    // Delete the flower if the user is using the eraser tool.
+    if (newValue === FLOWER_DELETION_TOOL) {
+      // eslint-disable-next-line no-param-reassign
+      delete nextLayout[key];
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      nextLayout[key] = newValue;
+    }
+  });
+  return nextLayout;
+};
+
+const floodFill = ({ flowerLayout, setFlowerLayout, selectedFlower }) => ({
+  target,
+}) => {
+  if (selectedFlower === NO_SELECTED_FLOWER) return;
+  let { x, y } = target.dataset;
+  if (!x || !y) return;
+
+  x = Number.parseInt(x, 10);
+  y = Number.parseInt(y, 10);
+
+  if (Number.isNaN(x) || Number.isNaN(y)) return;
+
+  // TODO: traverse flower layout.
+
+  setFlowerLayout(mutateFlowersInLayout(flowerLayout, [], selectedFlower));
 };
 
 const drawFlowerGrid = (
@@ -64,7 +86,6 @@ const drawFlowerGrid = (
 ) => () => {
   if (selectedFlower === NO_SELECTED_FLOWER) return;
 
-  const nextLayout = { ...flowerLayout };
   const refs = flowerRefs.current;
 
   // Avoid calculating getBoundingClientRect() on every ref for performance.
@@ -76,6 +97,8 @@ const drawFlowerGrid = (
 
   // Calculate which elements the rectangle intersects with.
   const drawnRectangle = { ...start, ...size };
+  const mutatedKeys = [];
+  let flowersChanged = false;
   for (let i = 0; i < width; i += 1) {
     for (let j = 0; j < height; j += 1) {
       const key = `${i}-${j}`;
@@ -92,24 +115,35 @@ const drawFlowerGrid = (
       if (
         rectanglesIntersect({ top, left, width: w, height: h }, drawnRectangle)
       ) {
-        mutateFlowerInLayout(nextLayout, key, selectedFlower);
+        mutatedKeys.push(key);
+
+        const visitedFlower = refs[key].dataset.flower;
+        flowersChanged =
+          visitedFlower !== `${selectedFlower}` || flowersChanged;
       }
     }
   }
 
-  save(nextLayout);
+  save(
+    mutateFlowersInLayout(
+      flowerLayout,
+      mutatedKeys,
+      // If all intersecting flowers are the same as the current one, delete
+      // flowers instead of drawing them.
+      flowersChanged ? selectedFlower : FLOWER_DELETION_TOOL,
+    ),
+  );
 };
 
 const generateOnMouseUp = (stateRefs) => {
   const finishRectangle = () => {
     const { current } = stateRefs;
-    if (!current.dragging || !current.rectStart) return;
+    if (!current.rectStart) return;
 
     // Draw the added flowers.
     current.drawFlowerGrid();
 
     // Remove rectangle.
-    current.setDragging(false);
     current.setRectStart(undefined);
 
     window.removeEventListener('mouseup', finishRectangle);
@@ -121,17 +155,17 @@ export default function FlowerGrid({
   tileSize,
   bgId,
   iconStyle,
+  gridLines,
   flowerLayout,
   setFlowerLayout,
   selectedFlower,
   mouse,
 }) {
-  const { canvasBg, tileBg } = BACKGROUNDS[bgId];
+  const { lineBg, tileBg } = BACKGROUNDS[bgId];
   const tileSizeStyle = TILE_SIZES[tileSize];
   const { width, height } = DEFAULT_DIMENSIONS;
 
   const flowerRefs = useRef({});
-  const [dragging, setDragging] = useState(false);
 
   // Rectangle start coordinates, based on page position.
   // mouse parameter is used for end coordinates.
@@ -139,11 +173,9 @@ export default function FlowerGrid({
 
   const { start, size } = normalizeRectangle(rectStart, mouse);
 
-  const stateRefs = useRef({ dragging, rectStart });
+  const stateRefs = useRef({});
   stateRefs.current = {
-    dragging,
     rectStart,
-    setDragging,
     setRectStart,
     drawFlowerGrid: drawFlowerGrid(setFlowerLayout, {
       flowerRefs,
@@ -162,13 +194,19 @@ export default function FlowerGrid({
       const id = flowerLayout[key];
       return (
         <div
+          data-flower={id}
+          data-key={key}
+          data-x={x}
+          data-y={y}
           ref={(el) => {
             flowerRefs.current[key] = el;
           }}
           className={styles.gridSquare}
           key={key}
           style={{
-            background: tileBg,
+            backgroundColor: tileBg.color,
+            backgroundImage: tileBg.img,
+            backgroundSize: tileSizeStyle.size,
             width: tileSizeStyle.size,
             height: tileSizeStyle.size,
           }}
@@ -184,7 +222,6 @@ export default function FlowerGrid({
     if (e.button !== 0) return;
     const { pageX, pageY } = e;
 
-    setDragging(true);
     setRectStart({ x: pageX, y: pageY });
 
     window.addEventListener('mouseup', generateOnMouseUp(stateRefs));
@@ -192,10 +229,19 @@ export default function FlowerGrid({
 
   return (
     <>
-      {dragging ? <Rectangle start={start} size={size} /> : ''}
+      {rectStart ? <Rectangle start={start} size={size} /> : ''}
       <div
-        className={styles.canvas}
-        style={{ background: canvasBg }}
+        className={`${styles.canvas} ${gridLines ? styles.gridLines : ''}`}
+        style={{ background: lineBg }}
+        onClick={
+          undefined &&
+          floodFill({
+            flowerLayout,
+            setFlowerLayout,
+            selectedFlower,
+            rectStart,
+          })
+        }
         onMouseDown={startRectangle}
       >
         {flowerGrid}

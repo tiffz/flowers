@@ -94,12 +94,16 @@ export const flowerSorts = Object.freeze({
 });
 
 export const BACKGROUNDS = Object.freeze([
-  { name: 'Light Mode', canvasBg: 'none', tileBg: 'white' },
-  { name: 'Dark Mode', canvasBg: '#141617', tileBg: '#232d32' },
-  { name: 'Grass', canvasBg: '#C0C62F', tileBg: '#589B4A' },
-  { name: 'Dirt', canvasBg: '#D0A96C', tileBg: '#DDB57C' },
-  { name: 'Dark Dirt', canvasBg: '#AC6E49', tileBg: '#B3754F' },
-  { name: 'Sand', canvasBg: '#E7C87B', tileBg: '#F4E6BA' },
+  { name: 'Light Mode', lineBg: 'none', tileBg: { color: 'white' } },
+  { name: 'Dark Mode', lineBg: '#141617', tileBg: { color: '#232d32' } },
+  {
+    name: 'Grass',
+    lineBg: '#C0C62F',
+    tileBg: { color: '#589B4A', img: 'url("images/textures/grass.png")' },
+  },
+  { name: 'Dirt', lineBg: '#D0A96C', tileBg: { color: '#DDB57C' } },
+  { name: 'Dark Dirt', lineBg: '#AC6E49', tileBg: { color: '#B3754F' } },
+  { name: 'Sand', lineBg: '#E7C87B', tileBg: { color: '#F4E6BA' } },
 ]);
 
 export const ICON_STYLES = Object.freeze(['Inventory', 'Storage']);

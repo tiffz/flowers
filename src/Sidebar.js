@@ -44,6 +44,8 @@ function Sidebar({
   setTileSize,
   sortStyle,
   setSortStyle,
+  gridLines,
+  setGridLines,
 }) {
   const [selectedTab, setTab] = useState(0);
   return (
@@ -62,6 +64,8 @@ function Sidebar({
             setIconStyle,
             tileSize,
             setTileSize,
+            gridLines,
+            setGridLines,
           }}
         />
       ) : (
@@ -159,6 +163,8 @@ function Settings({
   setIconStyle,
   tileSize,
   setTileSize,
+  gridLines,
+  setGridLines,
 }) {
   const [dialogOpen, setOpen] = React.useState(false);
   return (
@@ -176,6 +182,13 @@ function Settings({
       >
         <Flower id={1} iconStyle={iconStyle} />
         Switch flower style
+      </button>
+      <button
+        type="button"
+        className={`${styles.button} ${gridLines ? styles.selected : ''}`}
+        onClick={() => setGridLines(gridLines ? 0 : 1)}
+      >
+        Grid lines: {gridLines ? 'On' : 'Off'}
       </button>
       <div className={styles.buttonGroup}>
         {TILE_SIZES.map(({ name }, id) => (
@@ -239,15 +252,19 @@ function Settings({
 function BackgroundSelector({ bgId, setBgId }) {
   return (
     <div className={styles.backgroundSelector}>
-      {BACKGROUNDS.map(({ tileBg }, id) => {
+      {BACKGROUNDS.map(({ name, tileBg }, id) => {
         const selected = id === bgId;
         return (
           <button
-            key={tileBg}
+            key={name}
             type="button"
             className={`${styles.bgButton} ${selected ? styles.selected : ''}`}
             aria-label={`Change background to ${tileBg}`}
-            style={{ background: tileBg }}
+            style={{
+              backgroundColor: tileBg.color,
+              backgroundImage: tileBg.img,
+              backgroundSize: '100%',
+            }}
             onClick={() => setBgId(id)}
           />
         );

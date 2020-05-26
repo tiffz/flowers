@@ -11,22 +11,39 @@ import { FLOWER_DELETION_TOOL, flowerSorts } from './consts';
 
 const ENABLE_CURSOR = true;
 
+const tools = Object.freeze({
+  FLOWER_STAMP: 0,
+  PAINT_BUCKET: 1,
+  // TODO: Move, rectangle move
+});
+
+const DEFAULT_STATE = Object.freeze({
+  flowerLayout: {},
+  selectedFlower: 1,
+  bgId: 0,
+  iconStyle: 0,
+  tileSize: 1,
+  sortStyle: flowerSorts.BY_SPECIES,
+  gridLines: 1,
+});
+
 function App() {
-  const initialState = JSON.parse(localStorage.getItem('acnhFlowers')) || {};
+  const savedState = JSON.parse(localStorage.getItem('acnhFlowers')) || {};
+  const initialState = {
+    ...DEFAULT_STATE,
+    ...savedState,
+  };
   const mouse = useMousePosition();
 
-  const [flowerLayout, setFlowerLayout] = useState(
-    initialState.flowerLayout || {},
-  );
+  const [flowerLayout, setFlowerLayout] = useState(initialState.flowerLayout);
   const [selectedFlower, setSelectedFlower] = useState(
-    initialState.selectedFlower || 1,
+    initialState.selectedFlower,
   );
-  const [bgId, setBgId] = useState(initialState.bgId || 0);
-  const [iconStyle, setIconStyle] = useState(initialState.iconStyle || 0);
-  const [tileSize, setTileSize] = useState(initialState.tileSize || 1);
-  const [sortStyle, setSortStyle] = useState(
-    initialState.sortStyle || flowerSorts.BY_SPECIES,
-  );
+  const [bgId, setBgId] = useState(initialState.bgId);
+  const [iconStyle, setIconStyle] = useState(initialState.iconStyle);
+  const [tileSize, setTileSize] = useState(initialState.tileSize);
+  const [sortStyle, setSortStyle] = useState(initialState.sortStyle);
+  const [gridLines, setGridLines] = useState(initialState.gridLines);
 
   useEffect(() => {
     localStorage.setItem(
@@ -38,6 +55,7 @@ function App() {
         iconStyle,
         tileSize,
         sortStyle,
+        gridLines,
       }),
     );
   });
@@ -79,6 +97,8 @@ function App() {
             setTileSize,
             sortStyle,
             setSortStyle,
+            gridLines,
+            setGridLines,
           }}
         />
         <FlowerGrid
@@ -86,6 +106,7 @@ function App() {
             tileSize,
             bgId,
             iconStyle,
+            gridLines,
             flowerLayout,
             setFlowerLayout,
             selectedFlower,

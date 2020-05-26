@@ -2,25 +2,35 @@
   display: grid;
   overflow: auto;
   position: sticky;
-  grid-gap: 3px;
-  padding: 3px;
+  grid-gap: 0;
   grid-template-columns: repeat(30, max-content);
   transition: var(--bg-transition);
+}
+
+.gridLines {
+  grid-gap: 3px;
+  padding: 3px;
+}
+
+.gridLines > .gridSquare {
+  border-radius: 4px;
 }
 
 .gridSquare {
   width: 48px;
   height: 48px;
-  border-radius: 4px;
+  
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
   transition: var(--bg-transition);
+  background-size: 48px;
 }
 
 .gridSquare > img {
   pointer-events: none;
+  user-select: none;
 }
 
 .rectangle {
