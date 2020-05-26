@@ -243,7 +243,14 @@ function Settings({
       </p>
       <p>
         Source code{' '}
-        <a href="https://github.com/tiffz/flowers">available on Github</a>.
+        <a
+          href="https://github.com/tiffz/flowers"
+          target="_blank"
+          rel="noreferrer"
+        >
+          available on Github
+        </a>
+        .
       </p>
     </>
   );
