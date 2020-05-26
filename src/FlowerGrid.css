@@ -30,7 +30,6 @@
 
 .gridSquare > img {
   pointer-events: none;
-  user-select: none;
 }
 
 .rectangle {
