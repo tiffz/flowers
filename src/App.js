@@ -6,18 +6,14 @@ import styles from './App.css';
 import Sidebar from './Sidebar';
 import useMousePosition from './useMousePosition';
 import FlowerGrid from './FlowerGrid';
+import Flower from './Flower';
 import { FLOWER_DELETION_TOOL } from './consts';
 
-
-const ENABLE_CURSOR = false;
+const ENABLE_CURSOR = true;
 
 function App() {
   const initialState = JSON.parse(localStorage.getItem('acnhFlowers')) || {};
-  let mouse;
-
-  if (ENABLE_CURSOR) {
-    mouse = useMousePosition();
-  }
+  const mouse = useMousePosition();
 
   const [flowerLayout, setFlowerLayout] = useState(
     initialState.flowerLayout || {},
@@ -44,7 +40,7 @@ function App() {
 
   return (
     <>
-      {mouse && mouse.x > 0 && mouse.y > 0 ? (
+      {ENABLE_CURSOR && mouse.x > 0 && mouse.y > 0 ? (
         <div
           className={styles.cursorTracker}
           style={{
@@ -87,6 +83,7 @@ function App() {
             flowerLayout,
             setFlowerLayout,
             selectedFlower,
+            mouse,
           }}
         />
       </div>

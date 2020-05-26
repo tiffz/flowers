@@ -22,3 +22,11 @@
 .gridSquare > img {
   pointer-events: none;
 }
+
+.rectangle {
+  z-index: 999;
+  border: 1px solid var(--accent-color);
+  background: var(--accent-color-transparent);
+  box-sizing: border-box;
+  position: absolute;
+}

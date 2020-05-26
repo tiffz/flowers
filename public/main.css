@@ -5,6 +5,7 @@
   --accent-color: #635EE7;
   --accent-bg: #d0cff8;
   --accent-bg-light: #efeffd;
+  --accent-color-transparent: hsl(242, 74%, 64%, 0.2);
   --font-color: #222;
 }
 
