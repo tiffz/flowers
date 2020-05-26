@@ -7,7 +7,7 @@ import Sidebar from './Sidebar';
 import useMousePosition from './useMousePosition';
 import FlowerGrid from './FlowerGrid';
 import Flower from './Flower';
-import { FLOWER_DELETION_TOOL } from './consts';
+import { FLOWER_DELETION_TOOL, flowerSorts } from './consts';
 
 const ENABLE_CURSOR = true;
 
@@ -24,6 +24,9 @@ function App() {
   const [bgId, setBgId] = useState(initialState.bgId || 0);
   const [iconStyle, setIconStyle] = useState(initialState.iconStyle || 0);
   const [tileSize, setTileSize] = useState(initialState.tileSize || 1);
+  const [sortStyle, setSortStyle] = useState(
+    initialState.sortStyle || flowerSorts.BY_SPECIES,
+  );
 
   useEffect(() => {
     localStorage.setItem(
@@ -34,6 +37,7 @@ function App() {
         bgId,
         iconStyle,
         tileSize,
+        sortStyle,
       }),
     );
   });
@@ -73,6 +77,8 @@ function App() {
             setIconStyle,
             tileSize,
             setTileSize,
+            sortStyle,
+            setSortStyle,
           }}
         />
         <FlowerGrid

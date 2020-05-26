@@ -42,9 +42,10 @@ function Sidebar({
   setIconStyle,
   tileSize,
   setTileSize,
+  sortStyle,
+  setSortStyle,
 }) {
   const [selectedTab, setTab] = useState(0);
-  const [sortStyle, setSortStyle] = useState(flowerSorts.BY_SPECIES);
   return (
     <div className={styles.sidebar}>
       <StyledTabs value={selectedTab} onChange={(e, v) => setTab(v)}>
