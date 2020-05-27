@@ -1,8 +1,8 @@
 h2 {
   font-size: 18px;
-  line-height: 120%;
+  line-height: 150%;
   width: 100%;
-  padding: 0 8px;
+  padding: 4px 8px;
   letter-spacing: 0.1px;
   display: flex;
   justify-content: space-between;
@@ -53,6 +53,28 @@ p {
 
 .smallButton {
   line-height: 20px;
+  margin: 0;
+}
+
+.toolBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.toolBar > .button {
+  align-items: center;
+  border-color: transparent;
+  padding: 8px;
+  margin: 0 4px;
+  line-height: auto;
+  border-radius: 50%;
+}
+
+.toolBar > .button > .icon {
+  margin: 0;
 }
 
 .buttonGroup > button {
@@ -81,8 +103,9 @@ p {
   background: var(--accent-bg-light);
 }
 
-.button.selected, .buttonGroup > button.selected {
+.button.selected, .toolBar > .button.selected, .buttonGroup > button.selected {
   background: var(--accent-bg);
+  border-color: var(--accent-color);
 }
 
 .importExport {
@@ -137,5 +160,16 @@ p {
 
 .flowerSelectorButton.selected {
   background: var(--accent-bg);
+  border-color: var(--accent-color);
+}
+
+.randomSelector > button {
+  padding: 1px;
+  margin: 8px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+}
+
+.randomSelector > button.selected {
   border-color: var(--accent-color);
 }

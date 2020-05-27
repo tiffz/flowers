@@ -1,3 +1,11 @@
+export const tools = Object.freeze({
+  FLOWER_STAMP: 0,
+  PAINT_BUCKET: 1,
+  RANDOM: 2,
+  // MOVE: 3,
+  // RECTANGLE_MOVE: 4,
+});
+
 // Flower IDs start from 1 and are monotonically increasing.
 // Each flower has an image named after its ID.
 export const FLOWERS = Object.freeze([
@@ -86,6 +94,68 @@ export const FLOWER_COLOR_ORDER = Object.freeze([
   'Pink',
   'White',
   'Gold',
+]);
+
+export const RANDOM_FLOWER_OPTIONS = Object.freeze([
+  {
+    name: 'Any random flowers',
+    styles: {
+      backgroundImage:
+        'linear-gradient(319deg, #2D5BFF 0%, #7B3BA9 15%, #FF3C3D 37%, #FFF336 70%, white 100%)',
+      backgroundPosition: 'center center',
+      backgroundRepeat: 'no-repeat',
+      color: '#222',
+    },
+  },
+  {
+    name: 'Random black flowers',
+    color: 'Black',
+    styles: {
+      background: '#222',
+      color: 'white',
+    },
+  },
+  {
+    name: 'Random purple flowers',
+    color: 'Purple',
+    styles: {
+      background: '#7B3BA9',
+      color: 'white',
+    },
+  },
+  {
+    name: 'Random blue flowers',
+    color: 'Blue',
+    styles: {
+      background: '#2D5BFF',
+      color: 'white',
+    },
+  },
+  {
+    name: 'Random yellow flowers',
+    color: 'Yellow',
+    styles: { background: '#FFF336' },
+  },
+  {
+    name: 'Random orange flowers',
+    color: 'Orange',
+    styles: { background: '#FF9E2C' },
+  },
+  {
+    name: 'Random red flowers',
+    color: 'Red',
+    styles: { background: '#FF3C3D' },
+  },
+  {
+    name: 'Random pink flowers',
+    color: 'Pink',
+    styles: { background: '#FCA69F' },
+  },
+  {
+    name: 'Random white flowers',
+    color: 'White',
+    styles: { background: 'white' },
+  },
 ]);
 
 export const flowerSorts = Object.freeze({

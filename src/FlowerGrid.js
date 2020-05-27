@@ -3,6 +3,9 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useRef } from 'react';
 import {
+  tools,
+  FLOWERS,
+  RANDOM_FLOWER_OPTIONS,
   DEFAULT_DIMENSIONS,
   BACKGROUNDS,
   TILE_SIZES,
@@ -48,9 +51,14 @@ function normalizeRectangle(rectStart, end) {
   return { start, size };
 }
 
-const mutateFlowersInLayout = (layout, keys, newValue) => {
+const randomChoice = (arr) => {
+  return arr[Math.floor(Math.random() * arr.length)];
+};
+
+const mutateFlowersInLayout = (layout, keys, possibleValues) => {
   const nextLayout = { ...layout };
   keys.forEach((key) => {
+    const newValue = randomChoice(possibleValues);
     // Delete the flower if the user is using the eraser tool.
     if (newValue === FLOWER_DELETION_TOOL) {
       // eslint-disable-next-line no-param-reassign
@@ -63,9 +71,35 @@ const mutateFlowersInLayout = (layout, keys, newValue) => {
   return nextLayout;
 };
 
-const floodFill = ({ flowerLayout, setFlowerLayout, selectedFlower }) => ({
-  target,
-}) => {
+const floodFill = (visited, flowerLayout, x, y, match, maxX, maxY) => {
+  if (x < 0 || y < 0 || x >= maxX || y >= maxY) return [];
+
+  const key = `${x}-${y}`;
+
+  if (key in visited) return [];
+
+  // eslint-disable-next-line no-param-reassign
+  visited[key] = true;
+
+  if (flowerLayout[key] === match) {
+    return [
+      key,
+      ...floodFill(visited, flowerLayout, x + 1, y, match, maxX, maxY),
+      ...floodFill(visited, flowerLayout, x - 1, y, match, maxX, maxY),
+      ...floodFill(visited, flowerLayout, x, y + 1, match, maxX, maxY),
+      ...floodFill(visited, flowerLayout, x, y - 1, match, maxX, maxY),
+    ];
+  }
+  return [];
+};
+
+const applyPaintBucket = ({
+  flowerLayout,
+  setFlowerLayout,
+  selectedFlower,
+  width,
+  height,
+}) => ({ target }) => {
   if (selectedFlower === NO_SELECTED_FLOWER) return;
   let { x, y } = target.dataset;
   if (!x || !y) return;
@@ -75,16 +109,32 @@ const floodFill = ({ flowerLayout, setFlowerLayout, selectedFlower }) => ({
 
   if (Number.isNaN(x) || Number.isNaN(y)) return;
 
-  // TODO: traverse flower layout.
+  const key = `${x}-${y}`;
+  const matchingColor = flowerLayout[key] || undefined;
 
-  setFlowerLayout(mutateFlowersInLayout(flowerLayout, [], selectedFlower));
+  // Don't bother filling an identical color.
+  if (matchingColor === selectedFlower) return;
+
+  const updatedKeys = floodFill(
+    {},
+    flowerLayout,
+    x,
+    y,
+    matchingColor,
+    width,
+    height,
+  );
+
+  setFlowerLayout(
+    mutateFlowersInLayout(flowerLayout, updatedKeys, [selectedFlower]),
+  );
 };
 
 const drawFlowerGrid = (
   save,
-  { flowerRefs, flowerLayout, selectedFlower, start, size, width, height },
+  { flowerRefs, flowerLayout, fillFlowers, start, size, width, height },
 ) => () => {
-  if (selectedFlower === NO_SELECTED_FLOWER) return;
+  if (!fillFlowers.length) return;
 
   const refs = flowerRefs.current;
 
@@ -99,6 +149,8 @@ const drawFlowerGrid = (
   const drawnRectangle = { ...start, ...size };
   const mutatedKeys = [];
   let flowersChanged = false;
+  const selectedFlower =
+    fillFlowers.length === 1 ? fillFlowers[0] : NO_SELECTED_FLOWER;
   for (let i = 0; i < width; i += 1) {
     for (let j = 0; j < height; j += 1) {
       const key = `${i}-${j}`;
@@ -130,7 +182,7 @@ const drawFlowerGrid = (
       mutatedKeys,
       // If all intersecting flowers are the same as the current one, delete
       // flowers instead of drawing them.
-      flowersChanged ? selectedFlower : FLOWER_DELETION_TOOL,
+      flowersChanged ? fillFlowers : [FLOWER_DELETION_TOOL],
     ),
   );
 };
@@ -156,11 +208,18 @@ export default function FlowerGrid({
   bgId,
   iconStyle,
   gridLines,
+  currentTool,
   flowerLayout,
   setFlowerLayout,
   selectedFlower,
+  randomOption,
   mouse,
 }) {
+  const enableRectangleDraw = [tools.FLOWER_STAMP, tools.RANDOM].includes(
+    currentTool,
+  );
+  const enableFloodFill = currentTool === tools.PAINT_BUCKET;
+  const enableRandom = currentTool === tools.RANDOM;
   const { lineBg, tileBg } = BACKGROUNDS[bgId];
   const tileSizeStyle = TILE_SIZES[tileSize];
   const { width, height } = DEFAULT_DIMENSIONS;
@@ -173,6 +232,18 @@ export default function FlowerGrid({
 
   const { start, size } = normalizeRectangle(rectStart, mouse);
 
+  let fillFlowers =
+    selectedFlower === NO_SELECTED_FLOWER ? [] : [selectedFlower];
+  if (enableRandom) {
+    // Remove flower delete tool.
+    fillFlowers = FLOWERS.slice(1);
+    const { color } = RANDOM_FLOWER_OPTIONS[randomOption];
+    if (color) {
+      fillFlowers = fillFlowers.filter((flower) => flower.color === color);
+    }
+    fillFlowers = fillFlowers.map(({ id }) => id);
+  }
+
   const stateRefs = useRef({});
   stateRefs.current = {
     rectStart,
@@ -180,7 +251,7 @@ export default function FlowerGrid({
     drawFlowerGrid: drawFlowerGrid(setFlowerLayout, {
       flowerRefs,
       flowerLayout,
-      selectedFlower,
+      fillFlowers,
       start,
       size,
       width,
@@ -218,6 +289,7 @@ export default function FlowerGrid({
   );
 
   const startRectangle = (e) => {
+    if (!enableRectangleDraw) return;
     // Only catch left clicks.
     if (e.button !== 0) return;
     const { pageX, pageY } = e;
@@ -227,20 +299,31 @@ export default function FlowerGrid({
     window.addEventListener('mouseup', generateOnMouseUp(stateRefs));
   };
 
+  let customCursor;
+  if (enableFloodFill) {
+    customCursor = 'url("images/paint-bucket.cur"), auto';
+  }
+
   return (
     <>
       {rectStart ? <Rectangle start={start} size={size} /> : ''}
       <div
         className={`${styles.canvas} ${gridLines ? styles.gridLines : ''}`}
-        style={{ background: lineBg }}
+        style={{
+          background: lineBg,
+          cursor: customCursor,
+        }}
         onClick={
-          undefined &&
-          floodFill({
-            flowerLayout,
-            setFlowerLayout,
-            selectedFlower,
-            rectStart,
-          })
+          enableFloodFill
+            ? applyPaintBucket({
+                flowerLayout,
+                setFlowerLayout,
+                selectedFlower,
+                rectStart,
+                width,
+                height,
+              })
+            : undefined
         }
         onMouseDown={startRectangle}
       >

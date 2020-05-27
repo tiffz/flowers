@@ -6,15 +6,23 @@ import ToolsIcon from '@material-ui/icons/Build';
 import SettingsIcon from '@material-ui/icons/Settings';
 import SaveIcon from '@material-ui/icons/Save';
 import LoadIcon from '@material-ui/icons/FolderOpen';
+import FlowerStampIcon from '@material-ui/icons/LocalFlorist';
+import PaintBucketIcon from '@material-ui/icons/FormatColorFill';
+import RandomIcon from '@material-ui/icons/HelpOutlineRounded';
+import UndoIcon from '@material-ui/icons/Undo';
+import RedoIcon from '@material-ui/icons/Redo';
 
 import Flower from './Flower';
+import RandomFlower from './RandomFlower';
 import LoadDialog from './LoadDialog';
 import { StyledTabs, StyledTab } from './StyledTabs';
 import styles from './Sidebar.css';
 import {
+  tools,
   FLOWERS,
   FLOWER_COLOR_ORDER,
   FLOWER_SPECIES_ORDER,
+  RANDOM_FLOWER_OPTIONS,
   flowerSorts,
   BACKGROUNDS,
   ICON_STYLES,
@@ -33,11 +41,17 @@ function saveStateAsFile() {
 }
 
 function Sidebar({
+  undo,
+  redo,
   bgId,
   setBgId,
   setFlowerLayout,
+  currentTool,
+  setTool,
   selectedFlower,
   setSelectedFlower,
+  randomOption,
+  setRandomOption,
   iconStyle,
   setIconStyle,
   tileSize,
@@ -71,11 +85,17 @@ function Sidebar({
       ) : (
         <Tools
           {...{
+            undo,
+            redo,
+            currentTool,
+            setTool,
             iconStyle,
             sortStyle,
             setSortStyle,
             selectedFlower,
             setSelectedFlower,
+            randomOption,
+            setRandomOption,
           }}
         />
       )}
@@ -84,11 +104,17 @@ function Sidebar({
 }
 
 function Tools({
+  undo,
+  redo,
+  currentTool,
+  setTool,
   iconStyle,
   sortStyle,
   setSortStyle,
   selectedFlower,
   setSelectedFlower,
+  randomOption,
+  setRandomOption,
 }) {
   const updateSort = () => {
     setSortStyle((sortStyle + 1) % Object.keys(flowerSorts).length);
@@ -106,30 +132,106 @@ function Tools({
   }
   return (
     <>
-      <h2>
-        Flowers{' '}
+      <div className={styles.toolBar}>
         <button
           type="button"
-          className={styles.smallButton}
-          onClick={updateSort}
-          style={{ marginRight: '0px', width: '150px' }}
+          title="Flower stamp"
+          className={`${styles.button} ${
+            currentTool === tools.FLOWER_STAMP ? styles.selected : ''
+          }`}
+          onClick={() => setTool(tools.FLOWER_STAMP)}
         >
-          Sort by: {sortByColor ? 'Color' : 'Species'}
-        </button>
-      </h2>
-      <div className={styles.flowerSelector}>
-        <FlowerButton
-          id={FLOWER_DELETION_TOOL}
-          {...{ iconStyle, selectedFlower, setSelectedFlower }}
-        />
-        {sortedFlowers.map(({ id }) => (
-          <FlowerButton
-            key={id}
-            id={id}
-            {...{ iconStyle, selectedFlower, setSelectedFlower }}
+          <FlowerStampIcon
+            className={styles.icon}
+            htmlColor="var(--accent-color)"
           />
-        ))}
+        </button>
+        <button
+          type="button"
+          title="Paint bucket tool"
+          className={`${styles.button} ${
+            currentTool === tools.PAINT_BUCKET ? styles.selected : ''
+          }`}
+          onClick={() => setTool(tools.PAINT_BUCKET)}
+        >
+          <PaintBucketIcon
+            className={styles.icon}
+            htmlColor="var(--accent-color)"
+          />
+        </button>
+        <button
+          type="button"
+          title="Random flower tool"
+          className={`${styles.button} ${
+            currentTool === tools.RANDOM ? styles.selected : ''
+          }`}
+          onClick={() => setTool(tools.RANDOM)}
+        >
+          <RandomIcon className={styles.icon} htmlColor="var(--accent-color)" />
+        </button>
+
+        <button
+          type="button"
+          className={styles.button}
+          title="Undo"
+          onClick={undo}
+        >
+          <UndoIcon className={styles.icon} />
+        </button>
+        <button
+          type="button"
+          className={styles.button}
+          title="Redo"
+          onClick={redo}
+        >
+          <RedoIcon className={styles.icon} />
+        </button>
       </div>
+      {currentTool === tools.RANDOM ? (
+        <>
+          <h2>Random flower tool</h2>
+          <div className={styles.randomSelector}>
+            {RANDOM_FLOWER_OPTIONS.map(({ name }, id) => (
+              <button
+                type="button"
+                className={id === randomOption ? styles.selected : ''}
+                key={name}
+                title={name}
+                onClick={() => setRandomOption(id)}
+              >
+                <RandomFlower option={id} />
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <h2>
+            Flowers{' '}
+            <button
+              type="button"
+              className={styles.smallButton}
+              onClick={updateSort}
+              style={{ marginRight: '0px', width: '150px' }}
+            >
+              Sort by: {sortByColor ? 'Color' : 'Species'}
+            </button>
+          </h2>
+          <div className={styles.flowerSelector}>
+            <FlowerButton
+              id={FLOWER_DELETION_TOOL}
+              {...{ iconStyle, selectedFlower, setSelectedFlower }}
+            />
+            {sortedFlowers.map(({ id }) => (
+              <FlowerButton
+                key={id}
+                id={id}
+                {...{ iconStyle, selectedFlower, setSelectedFlower }}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </>
   );
 }
